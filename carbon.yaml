@@ -8,9 +8,11 @@ env:
 
 git:
   after: env
-  action: clone
-  source: https://github.com/ardanlabs/service
-  dest: $base_path
+  vars:
+    source: https://github.com/ardanlabs/service
+    dest: $base_path
+  commands:
+    - clone
 
 shell:
   after: git
