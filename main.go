@@ -18,21 +18,6 @@ var (
 
 // ============================================================================
 
-// TODO finish implementing all "built-ins" as ordinary commands
-// TODO organize config for execution (Options pattern?)
-// TODO migrate code to Github repo
-// TODO setup Github project
-// TODO implement env as framework API exposed for plugs
-// TODO make tool level config (can override in script)
-// TODO standardize variable parsing/setting for Actions in lib
-// TODO design change for unmarshalling actions with order preserved
-// TODO design template builder step
-// TODO write action to validate script requirements are on host
-// TODO build initial CLI
-// TODO add CICD / Github Action
-
-// ============================================================================
-
 // load slurps a file. If path is empty string it looks for carbon.yaml
 func load(path string) ([]byte, error) {
 	if path == "" {
