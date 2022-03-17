@@ -12,3 +12,7 @@ The goal is to eliminate the work of planning and defining project layouts and b
 
 Write your carbon script in a yaml file. By default the tool looks for `carbon.yaml` in the working directory. You can then script actions to get and change source.
 
+## Design
+
+carbon is designed as a pluggable framework. The logic for each behavior is contained in structs that implement the Action interface. Actions register by name and the script executor resolves names in the register.
+
