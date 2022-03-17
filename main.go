@@ -64,6 +64,13 @@ func ToStringsMap(in interface{}) (map[string]string, error) {
 
 // ============================================================================
 
+// RegisterActions puts actions in the registry, so they're dicsoverable by executors
+func RegisterActions() {
+	registry["shell"] = NewShellAction
+	registry["env"] = NewEnvAction
+	registry["git"] = NewGitAction
+}
+
 // Lookup wraps the env (pkg scope), so we don't contaminate too much code with package scoped var
 func Lookup(k string) (string, error) {
 	v, ok := globalEnv[k]
@@ -73,7 +80,7 @@ func Lookup(k string) (string, error) {
 	return v, nil
 }
 
-// Resolve names in env when thye have the $ prefix
+// Resolve names in env. Looks up when they have the $ prefix, else returns name.
 func Resolve(v string) (string, error) {
 	if strings.HasPrefix(v, "$") {
 		return Lookup(v[1:])
@@ -90,10 +97,6 @@ func main() {
 	var workflowName string
 	script := make(map[string]interface{})
 	// env := make(map[string]string)
-
-	// crude registration mechanism
-	registry["shell"] = NewShellAction
-	registry["env"] = NewEnvAction
 
 	// TODO start taking actual input from CLI flags
 	b, err := load("")
