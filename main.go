@@ -123,6 +123,8 @@ func RegisterActions() {
 	registry["shell"] = NewShellAction
 	registry["env"] = NewEnvAction
 	registry["git"] = NewGitAction
+	registry["text_replace"] = NewTextReplaceAction
+	registry["path_rename"] = NewPathRenameAction
 }
 
 // Lookup wraps the env (pkg scope), so we don't contaminate too much code with package scoped var
