@@ -1,6 +1,6 @@
 # demo file
-
 ---
+
 name: Create Project from ArdanLabs Service Demo
 
 env:
@@ -16,6 +16,30 @@ steps:
       commands:
         - clone
 
+  - name: Replace text in all files from service repo
+    text_replace:
+      vars:
+        dir: $base_path
+        exclude: ["vendor", ".git"]
+      substitutions:
+        - {"old": "ardanlabs/service", "new": "nslaughter/myservice"}
+        - {"old": "app/", "new": "cmd/"}
+        - {"old": "zarf/", "new": "deploy/"}
+        - {"old": "business/", "new": "domain/"}
+        - {"old": "foundation/", "new": "infra/"}
+        - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
+
+  - name: Move package directories
+    path_rename:
+      vars:
+        dir: $base_path
+        exclude: ["vendor", ".git"]
+      substitutions:
+      - {"old": "app", "new": "cmd"}
+      - {"old": "zarf", "new": "deploy"}
+      - {"old": "business", "new": "domain"}
+      - {"old": "foundation", "new": "infra"}
+
   - name: Replace module and deps info
     shell:
       vars:
@@ -26,23 +50,3 @@ steps:
         - go mod init
         - go mod tidy
         - go mod vendor
-
-  - name: Replace text in all files from service repo
-    text_replace:
-      vars:
-        dir: $base_path
-        exclude: ["vendor", ".git"]
-      substitutions:
-        - {"old": "app/", "new": "cmd/"}
-        - {"old": "zarf/", "new": "deploy/"}
-        - {"old": "business/", "new": "domain/"}
-        - {"old": "foundation/", "new": "infra/"}
-
-  - name: Move package directories
-    path_rename:
-      vars:
-        dir: $base_path
-        exclude: ["vendor", ".git"]
-      substitutions:
-      - {"old": "ardanlabs/service", "new": "nslaughter/myservice"}
-      - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
