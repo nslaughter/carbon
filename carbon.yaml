@@ -1,46 +1,48 @@
 # demo file
 
 ---
-workflow: Create Project from ArdanLabs Service Demo
+name: Create Project from ArdanLabs Service Demo
 
 env:
   base_path: "/Users/njs/go/src/github.com/nslaughter/myservice"
 
-git:
-  after: env
-  vars:
-    source: https://github.com/ardanlabs/service
-    dest: $base_path
-  commands:
-    - clone
+steps:
 
-shell:
-  after: git
-  vars:
-    dir: $base_path
-  commands:
-    - rm go.mod go.sum
-    - rm -rf vendor
-    - go mod init
-    - go mod tidy
-    - go mod vendor
+  - name: Clone ArdanLabs base service repo
+    git:
+      vars:
+        source: https://github.com/ardanlabs/service
+        dest: $base_path
+      commands:
+        - clone
 
-text_replace:
-  after: shell
-  vars:
-    dir: $base_path
-    exclude: ["vendor", ".git"]
-  substitutions:
-    - {"old": "app/", "new": "cmd/"}
-    - {"old": "zarf/", "new": "deploy/"}
-    - {"old": "business/", "new": "domain/"}
-    - {"old": "foundation/", "new": "infra/"}
+  - name: Replace module and deps info
+    shell:
+      vars:
+        dir: $base_path
+      commands:
+        - rm go.mod go.sum
+        - rm -rf vendor
+        - go mod init
+        - go mod tidy
+        - go mod vendor
 
-path_rename:
-  after: text_replace
-  vars:
-    dir: $base_path
-    exclude: ["vendor", ".git"]
-  substitutions:
-  - {"old": "ardanlabs/service", "new": "nslaughter/myservice"}
-  - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
+  - name: Replace text in all files from service repo
+    text_replace:
+      vars:
+        dir: $base_path
+        exclude: ["vendor", ".git"]
+      substitutions:
+        - {"old": "app/", "new": "cmd/"}
+        - {"old": "zarf/", "new": "deploy/"}
+        - {"old": "business/", "new": "domain/"}
+        - {"old": "foundation/", "new": "infra/"}
+
+  - name: Move package directories
+    path_rename:
+      vars:
+        dir: $base_path
+        exclude: ["vendor", ".git"]
+      substitutions:
+      - {"old": "ardanlabs/service", "new": "nslaughter/myservice"}
+      - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
