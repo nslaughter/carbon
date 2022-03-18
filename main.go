@@ -16,6 +16,60 @@ var (
 	registry    = make(map[string]ActionMaker)
 )
 
+type ActionSpec map[interface{}]interface{}
+
+// Vars will return nothing if the spec uses
+func (s ActionSpec) Vars() interface{} {
+	return s["vars"]
+}
+
+// ActionType names the action
+func (s ActionSpec) ActionType() string {
+	log.Println(s)
+	for k, _ := range s {
+		return k.(string)
+	}
+	return ""
+}
+
+// Get will return nothing if the spec uses
+func (s ActionSpec) Get(k string) (interface{}, bool) {
+	v, ok := s[k]
+	return v, ok
+}
+
+// Step ...
+type Step map[string]interface{}
+
+func (s Step) Name() string {
+	for k, v := range s {
+		if k == "name" {
+			return v.(string)
+		}
+	}
+	return ""
+}
+
+func (s Step) ActionType() string {
+	for k, _ := range s {
+		if k != "name" {
+			return k
+		}
+	}
+	return ""
+}
+
+func (s Step) ActionSpec() ActionSpec {
+	return s[s.ActionType()].(map[interface{}]interface{})
+}
+
+// Script ...
+type Script struct {
+	Name  string
+	Env   map[string]string
+	Steps []Step
+}
+
 // ============================================================================
 
 // load slurps a file. If path is empty string it looks for carbon.yaml
@@ -37,7 +91,7 @@ type Key string
 // ============================================================================
 
 type Action interface {
-	Set(vars interface{}) error
+	Set(s ActionSpec) error
 	Validate() error
 	Run() error
 }
@@ -95,8 +149,9 @@ func Resolve(v string) (string, error) {
 
 func main() {
 	var workflowName string
-	script := make(map[string]interface{})
-	// env := make(map[string]string)
+	var script Script
+
+	RegisterActions()
 
 	// TODO start taking actual input from CLI flags
 	b, err := load("")
@@ -111,39 +166,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	// first check built ins, default goes to the plugin registry
-	for k, v := range script {
-		switch k {
-		case "workflow":
-			name, ok := v.(string)
-			if !ok {
-				log.Printf("expected workflow to be %T", name)
+	log.Println("Executing script: ", script.Name)
+
+	// process env vars
+	for k, v := range script.Env {
+		globalEnv[k] = v
+	}
+
+	for _, step := range script.Steps {
+		log.Println("running: ", step.Name())
+		log.Println("spec: ", step.ActionType())
+		action, ok := registry[step.ActionType()]
+		if !ok {
+			log.Println("no plugin named ", step.ActionType())
+		} else {
+			a := action()
+			if err := a.Set(step.ActionSpec()); err != nil {
+				log.Println("setting: ", err)
+				os.Exit(1)
 			}
-			workflowName = name
-			continue
-		default:
-			log.Println("doing action: ", k)
-			action, ok := registry[k]
-			if !ok {
-				log.Println("no plugin named ", k)
-			} else {
-				venv, ok := v.(map[interface{}]interface{})
-				if !ok {
-					log.Printf("action block NO")
-					os.Exit(1)
-				}
-				a := action()
-				if err := a.Set(venv); err != nil {
-					log.Println("setting: ", err)
-					os.Exit(1)
-				}
-				if err := a.Run(); err != nil {
-					log.Println("failed running: ", err)
-					os.Exit(1)
-				}
+			if err := a.Run(); err != nil {
+				log.Println("failed running: ", err)
+				os.Exit(1)
 			}
 		}
-		log.Printf(k)
 	}
 
 	log.Println("workflow: ", workflowName)
