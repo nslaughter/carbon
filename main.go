@@ -16,9 +16,10 @@ var (
 	registry    = make(map[string]ActionMaker)
 )
 
+// An ActionSpec contains data specifying an action.
 type ActionSpec map[interface{}]interface{}
 
-// Vars will return nothing if the spec uses
+// Vars extracts the "vars" key from an ActionSpec.
 func (s ActionSpec) Vars() interface{} {
 	return s["vars"]
 }
@@ -32,7 +33,7 @@ func (s ActionSpec) ActionType() string {
 	return ""
 }
 
-// Get will return nothing if the spec uses
+// Get either returns the value of a provided key and true or nil and false.
 func (s ActionSpec) Get(k string) (interface{}, bool) {
 	v, ok := s[k]
 	return v, ok
@@ -41,6 +42,7 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 // A Step is one unit of execution
 type Step map[string]interface{}
 
+// Name should uniquely describe a Step.
 func (s Step) Name() string {
 	for k, v := range s {
 		if k == "name" {
@@ -84,12 +86,9 @@ func load(path string) ([]byte, error) {
 	return b, nil
 }
 
-type Value interface{}
-
-type Key string
-
 // ============================================================================
 
+// Actions contain the logic of script steps.
 type Action interface {
 	Set(s ActionSpec) error
 	Validate() error
