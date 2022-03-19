@@ -26,7 +26,7 @@ func (s ActionSpec) Vars() interface{} {
 // ActionType names the action
 func (s ActionSpec) ActionType() string {
 	log.Println(s)
-	for k, _ := range s {
+	for k := range s {
 		return k.(string)
 	}
 	return ""
@@ -51,7 +51,7 @@ func (s Step) Name() string {
 }
 
 func (s Step) ActionType() string {
-	for k, _ := range s {
+	for k := range s {
 		if k != "name" {
 			return k
 		}
@@ -149,14 +149,14 @@ func Resolve(v string) (string, error) {
 // built-in keys like "env" and "workflow" could be plugins
 // if we exposed access to environment in the framework API
 
-func main() {
+func run() {
 	var workflowName string
 	var script Script
 
 	RegisterActions()
 
 	// TODO start taking actual input from CLI flags
-	b, err := load("")
+	b, err := load(File)
 	if err != nil {
 		log.Println("failed loading script: ", err)
 		os.Exit(1)
