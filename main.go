@@ -86,9 +86,12 @@ func load(path string) ([]byte, error) {
 	return b, nil
 }
 
+type Value interface{}
+
+type Key string
+
 // ============================================================================
 
-// Actions contain the logic of script steps.
 type Action interface {
 	Set(s ActionSpec) error
 	Validate() error
