@@ -53,10 +53,12 @@ func CLI(args []string) (exitcode int) {
 	if CPUProfile != "" {
 		f, err := os.Create(CPUProfile)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return 1
 		}
 		if err := pprof.StartCPUProfile(f); err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return 1
 		}
 		// profile won't be written in case of error.
 		defer pprof.StopCPUProfile()
@@ -64,7 +66,8 @@ func CLI(args []string) (exitcode int) {
 	if MemProfile != "" {
 		f, err := os.Create(MemProfile)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return 1
 		}
 		// NB: memprofile won't be written in case of error.
 		defer func() {
@@ -78,10 +81,12 @@ func CLI(args []string) (exitcode int) {
 	if Trace != "" {
 		f, err := os.Create(Trace)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return 1
 		}
 		if err := trace.Start(f); err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return 1
 		}
 		// NB: trace log won't be written in case of error.
 		defer func() {

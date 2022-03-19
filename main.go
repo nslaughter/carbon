@@ -38,7 +38,7 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 	return v, ok
 }
 
-// Step ...
+// A Step is one unit of execution
 type Step map[string]interface{}
 
 func (s Step) Name() string {
@@ -63,7 +63,7 @@ func (s Step) ActionSpec() ActionSpec {
 	return s[s.ActionType()].(map[interface{}]interface{})
 }
 
-// Script ...
+// Script is the root of a carbon app
 type Script struct {
 	Name  string
 	Env   map[string]string

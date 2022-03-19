@@ -71,10 +71,10 @@ func (a *TextReplaceAction) Set(s ActionSpec) error {
 		return errors.New(fmt.Sprintf("could not assert %T to %T", i, ifcs))
 	}
 	for _, v := range ifcs {
-		old, _ := getKey(v, "old")
-		new, _ := getKey(v, "new")
-		oldStr, oldOK := old.(string)
-		newStr, newOK := new.(string)
+		oldIfc, _ := getKey(v, "old")
+		newIfc, _ := getKey(v, "new")
+		oldStr, oldOK := oldIfc.(string)
+		newStr, newOK := newIfc.(string)
 		if !oldOK || !newOK {
 			return errors.New(fmt.Sprintf("could not assert %T | %T to string | string - %s", old, new, oldStr))
 		}
@@ -110,7 +110,7 @@ func (a *TextReplaceAction) processFile(path string) error {
 		}
 		b = bytes.ReplaceAll(b, []byte(s.Old), []byte(s.New))
 	}
-	if err = os.WriteFile(path, b, 0644); err != nil {
+	if err := os.WriteFile(path, b, 0o644); err != nil {
 		return err
 	}
 	return nil

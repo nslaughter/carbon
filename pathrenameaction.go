@@ -10,7 +10,7 @@ import (
 )
 
 // TODO this is almost identical to the text_replace action. Their respective
-// processXXX methods are the differences
+// processXXX methods are the differences.
 
 func NewPathRenameAction() Action {
 	return &PathRenameAction{
@@ -73,10 +73,10 @@ func (a *PathRenameAction) Set(s ActionSpec) error {
 		return errors.New(fmt.Sprintf("could not assert %T to %T", i, ifcs))
 	}
 	for _, v := range ifcs {
-		old, _ := getKey(v, "old")
-		new, _ := getKey(v, "new")
-		oldStr, oldOK := old.(string)
-		newStr, newOK := new.(string)
+		oldIfc, _ := getKey(v, "old")
+		newIfc, _ := getKey(v, "new")
+		oldStr, oldOK := oldIfc.(string)
+		newStr, newOK := newIfc.(string)
 		if !oldOK || !newOK {
 			return errors.New(fmt.Sprintf("could not assert %T | %T to string | string - %s", old, new, oldStr))
 		}
