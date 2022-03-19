@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/go-yaml/yaml"
+	"github.com/mitchellh/mapstructure"
 )
 
 var (
@@ -39,7 +40,36 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 	return v, ok
 }
 
-// A Step is one unit of execution
+func (s ActionSpec) ToAction(a interface{}) error {
+	// set what we have at the top-level
+	if err := mapstructure.Decode(s, a); err != nil {
+		return fmt.Errorf("decoding top-level %w", err)
+	}
+
+	// get vars, resolve in global map, then decode them to top-level
+	sm, ok := s.Vars().(map[interface{}]interface{})
+	if !ok {
+		return errors.New(fmt.Sprintf("could not assert %T to %T", s.Vars(), sm))
+	}
+
+	for k, v := range sm {
+		if sym, ok := v.(string); ok {
+			sval, err := Resolve(sym)
+			if err != nil {
+				return err
+			}
+			sm[k] = sval
+		}
+	}
+
+	if err := mapstructure.Decode(sm, a); err != nil {
+		return fmt.Errorf("decoding vars %w", err)
+	}
+
+	return nil
+}
+
+// A Step is one unit of execution.
 type Step map[string]interface{}
 
 // Name should uniquely describe a Step.
