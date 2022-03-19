@@ -44,7 +44,7 @@ func (a *ShellAction) Set(s ActionSpec) error {
 	cs := make([][]string, 0)
 	ifcs, ok := incs.([]interface{})
 	if !ok {
-		return errors.New(fmt.Sprintf("expected %T", ifcs))
+		return fmt.Errorf("expected %T", ifcs)
 	}
 	for _, item := range ifcs {
 		c, ok := item.(string)

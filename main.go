@@ -49,7 +49,7 @@ func (s ActionSpec) ToAction(a interface{}) error {
 	// get vars, resolve in global map, then decode them to top-level
 	sm, ok := s.Vars().(map[interface{}]interface{})
 	if !ok {
-		return errors.New(fmt.Sprintf("could not assert %T to %T", s.Vars(), sm))
+		return fmt.Errorf("could not assert %T to %T", s.Vars(), sm)
 	}
 
 	for k, v := range sm {
@@ -138,7 +138,7 @@ func ToStringsMap(in interface{}) (map[string]string, error) {
 		kVal, kOK := k.(string)
 		vVal, vOK := v.(string)
 		if !kOK || !vOK {
-			return res, errors.New(fmt.Sprintf("%T could not map to %T", in, res))
+			return res, fmt.Errorf("%T could not map to %T", in, res)
 		}
 		res[kVal] = vVal
 	}
@@ -160,7 +160,7 @@ func RegisterActions() {
 func Lookup(k string) (string, error) {
 	v, ok := globalEnv[k]
 	if !ok {
-		return "", errors.New(fmt.Sprintf("variable not present %s", k))
+		return "", fmt.Errorf("variable not present %s", k)
 	}
 	return v, nil
 }
