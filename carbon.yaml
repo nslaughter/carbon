@@ -46,7 +46,8 @@ steps:
         dir: $base_path
       commands:
         - rm go.mod go.sum
-        - rm -rf vendor
+        - rm CONTRIBUTORS
+        - rm -rf .reading .circleci vendor
         - go mod init
         - go mod tidy
         - go mod vendor
