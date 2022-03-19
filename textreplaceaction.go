@@ -29,18 +29,6 @@ func (a *TextReplaceAction) Set(s ActionSpec) error {
 	return s.ToAction(a)
 }
 
-func getKey(m interface{}, k string) (interface{}, error) {
-	v, ok := m.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("could not assert")
-	}
-	i, ok := v[k]
-	if !ok {
-		return nil, errors.New("no key " + k)
-	}
-	return i, nil
-}
-
 func (a *TextReplaceAction) Validate() error {
 	return nil
 }
