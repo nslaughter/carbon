@@ -7,13 +7,13 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-)
 
-// TODO this is almost identical to the text_replace action. Their respective
-// processXXX methods are the differences.
+	"github.com/mitchellh/mapstructure"
+)
 
 func NewPathRenameAction() Action {
 	return &PathRenameAction{
+		Excludes:      make([]string, 0),
 		Substitutions: make([]Substitution, 0),
 	}
 }
@@ -29,60 +29,29 @@ type PathRenameAction struct {
 }
 
 func (a *PathRenameAction) Set(s ActionSpec) error {
-	// set vars
+	// set what we have at the top-level
+	if err := mapstructure.Decode(s, a); err != nil {
+		return fmt.Errorf("decoding top-level %w", err)
+	}
+
+	// get vars, resolve in global map, then decode them to top-level
 	sm, ok := s.Vars().(map[interface{}]interface{})
 	if !ok {
 		return errors.New(fmt.Sprintf("could not assert %T to %T", s.Vars(), sm))
 	}
+
 	for k, v := range sm {
-		switch k {
-		case "dir":
-			if d, ok := sm[k]; ok {
-				if sk, ok := d.(string); ok {
-					var err error
-					if a.Dir, err = Resolve(sk); err != nil {
-						return err
-					}
-				}
+		if sym, ok := v.(string); ok {
+			sval, err := Resolve(sym)
+			if err != nil {
+				return err
 			}
-		case "exclude":
-			if d, ok := sm[k]; ok {
-				ifcs, ok := d.([]interface{})
-				if !ok {
-					return errors.New("could not assert exclude interface{}")
-				}
-				for _, v := range ifcs {
-					s, ok := v.(string)
-					if !ok {
-						return errors.New("could not assert " + string(s))
-					}
-					a.Excludes = append(a.Excludes, s)
-				}
-			}
-		default:
-			log.Println("unexpected var key: ", k, "; value: ", v)
+			sm[k] = sval
 		}
 	}
 
-	i, ok := s.Get("substitutions")
-	if !ok {
-		return errors.New("key not found: substitutions")
-	}
-	ifcs, ok := i.([]interface{})
-	if !ok {
-		return errors.New(fmt.Sprintf("could not assert %T to %T", i, ifcs))
-	}
-	for _, v := range ifcs {
-		oldIfc, _ := getKey(v, "old")
-		newIfc, _ := getKey(v, "new")
-		oldStr, oldOK := oldIfc.(string)
-		newStr, newOK := newIfc.(string)
-		if !oldOK || !newOK {
-			return errors.New(fmt.Sprintf("could not assert %T | %T to string | string - %s", oldIfc, newIfc, oldStr))
-		}
-		s := Substitution{Old: oldStr, New: newStr}
-		a.Substitutions = append(a.Substitutions, s)
-		log.Println("Adding PATH substitution: ", s)
+	if err := mapstructure.Decode(sm, a); err != nil {
+		return fmt.Errorf("decoding vars %w", err)
 	}
 
 	return nil
