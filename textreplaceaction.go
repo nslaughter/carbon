@@ -76,7 +76,7 @@ func (a *TextReplaceAction) Set(s ActionSpec) error {
 		oldStr, oldOK := oldIfc.(string)
 		newStr, newOK := newIfc.(string)
 		if !oldOK || !newOK {
-			return errors.New(fmt.Sprintf("could not assert %T | %T to string | string - %s", old, new, oldStr))
+			return errors.New(fmt.Sprintf("could not assert %T | %T to string | string - %s", oldIfc, newIfc, oldStr))
 		}
 		s := Substitution{Old: oldStr, New: newStr}
 		a.Substitutions = append(a.Substitutions, s)
