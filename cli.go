@@ -49,6 +49,7 @@ func RegisterFlags() {
 	flag.StringVar(&Trace, "trace", "", "write trace log to this file")
 }
 
+//nolint:gocognit // Fine with the complexity of this function right now.
 func CLI(args []string) (exitcode int) {
 	if CPUProfile != "" {
 		f, err := os.Create(CPUProfile)
