@@ -28,6 +28,7 @@ steps:
         - {"old": "business/", "new": "domain/"}
         - {"old": "foundation/", "new": "infra/"}
         - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
+        - {"old": "ardan-starter", "new": "myservice-starter"}
 
   - name: Move package directories
     path_rename:
