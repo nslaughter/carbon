@@ -10,8 +10,12 @@ import (
 	"runtime/trace"
 )
 
-// File is the path to the script
-var File string
+var (
+	// File is the path to the script.
+	File string
+	// Version is whether to print build version info.
+	Version bool
+)
 
 // Log files for optional performance tracing.
 var CPUProfile, MemProfile, Trace string
@@ -43,6 +47,7 @@ Run '%[1]s help' for more detail,
 
 func RegisterFlags() {
 	flag.StringVar(&File, "file", "f", "file of script (defaults to carbon.yaml)")
+	flag.BoolVar(&Version, "version", false, "print the version and build info")
 
 	flag.StringVar(&CPUProfile, "cpuprofile", "", "write CPU profile to this file")
 	flag.StringVar(&MemProfile, "memprofile", "", "write memory profile to this file")
@@ -94,6 +99,11 @@ func CLI(args []string) (exitcode int) {
 			trace.Stop()
 			log.Printf("To view the trace, run:\n$ go tool trace view %s", Trace)
 		}()
+	}
+
+	if Version {
+		log.Printf("version: %s", build)
+		return 0
 	}
 
 	run()
