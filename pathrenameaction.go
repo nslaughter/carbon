@@ -14,10 +14,6 @@ func NewPathRenameAction() Action {
 	}
 }
 
-// type Substitution struct {
-// 	Old, New string
-// }
-
 type PathRenameAction struct {
 	Dir           string
 	Excludes      []string

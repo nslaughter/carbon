@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -41,7 +40,7 @@ func (a *TextReplaceAction) processFile(path string) error {
 		}
 		b = bytes.ReplaceAll(b, []byte(s.Old), []byte(s.New))
 	}
-	if err := os.WriteFile(path, b, 0o644); err != nil {
+	if err := os.WriteFile(path, b, 0o600); err != nil {
 		return err
 	}
 	return nil

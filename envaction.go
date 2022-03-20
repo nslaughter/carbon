@@ -14,7 +14,7 @@ func NewEnvAction() Action {
 func (a *EnvAction) Set(s ActionSpec) error {
 	attrs, ok := interface{}(s).(map[interface{}]interface{})
 	if !ok {
-		return errors.New(fmt.Sprintf("vars %T not %T", s.Vars(), attrs))
+		return fmt.Errorf("vars %T not %T", s.Vars(), attrs)
 	}
 	for k, v := range attrs {
 		kstr, kOK := k.(string)

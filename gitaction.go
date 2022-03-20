@@ -22,24 +22,9 @@ type GitAction struct {
 }
 
 func (a *GitAction) Set(s ActionSpec) error {
-	// set vars
-	sm, err := ToStringsMap(s.Vars())
-	if err != nil {
+
+	if err := s.SetVars(a); err != nil {
 		return err
-	}
-	for k, v := range sm {
-		switch k {
-		case "source":
-			if d, ok := sm[k]; ok {
-				a.Source, err = Resolve(d)
-			}
-		case "dest":
-			if d, ok := sm[k]; ok {
-				a.Dest, err = Resolve(d)
-			}
-		default:
-			log.Println("cannot handle key: ", k, "; value: ", v)
-		}
 	}
 
 	// set commands

@@ -20,20 +20,9 @@ type ShellAction struct {
 }
 
 func (a *ShellAction) Set(s ActionSpec) error {
-	// set vars
-	sm, err := ToStringsMap(s.Vars())
-	if err != nil {
+
+	if err := s.SetVars(a); err != nil {
 		return err
-	}
-	for k, v := range sm {
-		switch k {
-		case "dir":
-			if d, ok := sm[k]; ok {
-				a.Dir, err = Resolve(d)
-			}
-		default:
-			log.Println("cannot handle key: ", k, "; value: ", v)
-		}
 	}
 
 	// set commands
@@ -64,7 +53,7 @@ func (a *ShellAction) Validate() error {
 
 func (a *ShellAction) Run() error {
 	for _, c := range a.Commands {
-		cmd := exec.Command(c[0], c[1:]...)
+		cmd := exec.Command(c[0], c[1:]...) //nolint:gosec // this risk is consistent with code's legitimate purpose
 		cmd.Dir = a.Dir
 		out, err := cmd.Output()
 		if err != nil {

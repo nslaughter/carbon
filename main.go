@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -40,12 +39,7 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 	return v, ok
 }
 
-func (s ActionSpec) ToAction(a interface{}) error {
-	// set what we have at the top-level
-	if err := mapstructure.Decode(s, a); err != nil {
-		return fmt.Errorf("decoding top-level %w", err)
-	}
-
+func (s ActionSpec) SetVars(a interface{}) error {
 	// get vars, resolve in global map, then decode them to top-level
 	sm, ok := s.Vars().(map[interface{}]interface{})
 	if !ok {
@@ -64,6 +58,18 @@ func (s ActionSpec) ToAction(a interface{}) error {
 
 	if err := mapstructure.Decode(sm, a); err != nil {
 		return fmt.Errorf("decoding vars %w", err)
+	}
+	return nil
+}
+
+func (s ActionSpec) ToAction(a interface{}) error {
+	// set what we have at the top-level
+	if err := mapstructure.Decode(s, a); err != nil {
+		return fmt.Errorf("decoding top-level %w", err)
+	}
+
+	if err := s.SetVars(a); err != nil {
+		return err
 	}
 
 	return nil
@@ -126,24 +132,6 @@ type Action interface {
 }
 
 type ActionMaker func() Action
-
-// ToStringsMap is a utility function for converting interface{} to map[string]string
-func ToStringsMap(in interface{}) (map[string]string, error) {
-	res := make(map[string]string)
-	inMap, ok := in.(map[interface{}]interface{})
-	if !ok {
-		return nil, errors.New("key not string")
-	}
-	for k, v := range inMap {
-		kVal, kOK := k.(string)
-		vVal, vOK := v.(string)
-		if !kOK || !vOK {
-			return res, fmt.Errorf("%T could not map to %T", in, res)
-		}
-		res[kVal] = vVal
-	}
-	return res, nil
-}
 
 // ============================================================================
 
