@@ -51,3 +51,12 @@ steps:
         - go mod init
         - go mod tidy
         - go mod vendor
+
+  - name: Expand templates for demo
+    template:
+      source:
+      dest:
+      data:
+        first: one
+        second: two
+        third: 3
