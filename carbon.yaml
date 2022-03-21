@@ -13,8 +13,7 @@ steps:
       vars:
         source: https://github.com/ardanlabs/service
         dest: $base_path
-      commands:
-        - clone
+      command: clone
 
   - name: Replace text in all files from service repo
     text_replace:
