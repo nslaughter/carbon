@@ -56,6 +56,36 @@ func multimatch(patterns []string, s string) (matched bool, err error) {
 	return
 }
 
+func parseFile(tmpl *template.Template, fullpath, basepath string) (*template.Template, error) {
+	b, err := os.ReadFile(fullpath)
+	if err != nil {
+		return nil, fmt.Errorf("ReadFile: %w", err)
+	}
+
+	rel, err := filepath.Rel(basepath, fullpath)
+	if err != nil {
+		return nil, fmt.Errorf("Rel: %w", err)
+	}
+
+	tmpl, err = tmpl.New(rel).Parse(string(b))
+	if err != nil {
+		return nil, fmt.Errorf("Parse: %w", err)
+	}
+
+	return tmpl, nil
+}
+
+func (a *TemplateAction) filterDir(path string) error {
+	matched, err := multimatch(a.Excludes, path)
+	if err != nil {
+		return fmt.Errorf("multimatch: %w", err)
+	}
+	if matched {
+		return filepath.SkipDir
+	}
+	return nil
+}
+
 // parseDir builds templates walking the directory and names templates for their
 // path. This keeps full path association with each template node.
 func (a *TemplateAction) parseDir(path string) (*template.Template, error) {
@@ -67,14 +97,7 @@ func (a *TemplateAction) parseDir(path string) (*template.Template, error) {
 				return fmt.Errorf("walk fail: %w", err)
 			}
 			if info.IsDir() {
-				matched, err := multimatch(a.Excludes, path)
-				if err != nil {
-					return fmt.Errorf("multimatch: %w", err)
-				}
-				if matched {
-					return filepath.SkipDir
-				}
-				return nil
+				return a.filterDir(path)
 			}
 
 			matched, err := multimatch(a.Excludes, path)
@@ -85,19 +108,9 @@ func (a *TemplateAction) parseDir(path string) (*template.Template, error) {
 				return nil
 			}
 
-			b, err := os.ReadFile(path)
+			tmpl, err = parseFile(tmpl, path, a.Source)
 			if err != nil {
-				return fmt.Errorf("ReadFile: %w", err)
-			}
-
-			rel, err := filepath.Rel(a.Source, path)
-			if err != nil {
-				return fmt.Errorf("Rel: %w", err)
-			}
-
-			tmpl, err = tmpl.New(rel).Parse(string(b))
-			if err != nil {
-				return fmt.Errorf("Parse: %w", err)
+				return err
 			}
 
 			return nil
