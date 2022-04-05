@@ -24,7 +24,14 @@ jobs:
       - name: Use distinct cache keys per matrix build
         uses: actions/cache@v3
         with:
+          path: |
+              ~/.cache/go-build
+              ~/Library/Caches/go-build
+              ~/go/pkg/mod
+              ~\AppData\Local\go-build
           key: ${{ runner.os }}-${{ runner.go-version }}-${{ hashFiles('**/go.*') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.go-version }}
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
