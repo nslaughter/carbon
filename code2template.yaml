@@ -1,0 +1,19 @@
+# demo file
+---
+
+name: Create template from source
+
+env:
+  base_path: "/Users/njs/go/src/github.com/nslaughter/carbon/plugins/template/testdata"
+
+steps:
+
+  - name: Expand templates to new location
+    template:
+      Source: "/Users/njs/go/src/github.com/nslaughter/carbon/plugins/template/testdata/tmpl"
+      Dest:  "/Users/njs/go/src/github.com/nslaughter/carbon/plugins/template/testdata"
+      Force: true
+      Data:
+        A: i_am_a
+        B: i_am_b
+        C: i_am_c

@@ -43,6 +43,9 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 }
 
 func (s ActionSpec) SetVars(a interface{}) error {
+	if a == nil || s.Vars() == nil {
+		return nil
+	}
 	// get vars, resolve in global map, then decode them to top-level
 	sm, ok := s.Vars().(map[interface{}]interface{})
 	if !ok {
@@ -145,6 +148,7 @@ func RegisterActions() {
 	registry["git"] = NewGitAction
 	registry["text_replace"] = NewTextReplaceAction
 	registry["path_rename"] = NewPathRenameAction
+	registry["template"] = NewTemplateAction
 }
 
 // Lookup wraps the env (pkg scope), so we don't contaminate too much code with package scoped var

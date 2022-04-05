@@ -21,10 +21,21 @@ jobs:
     steps:
       - uses: actions/setup-go@v2
       - uses: actions/checkout@v2
+      - name: Use distinct cache keys per matrix build
+        uses: actions/cache@v3
+        with:
+          path: |
+              ~/.cache/go-build
+              ~/Library/Caches/go-build
+              ~/go/pkg/mod
+              ~\AppData\Local\go-build
+          key: ${{ runner.os }}-${{ runner.go-version }}-${{ hashFiles('**/go.*') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.go-version }}
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29 # version of golangci-lint
+          # version: v1.45 # version of golangci-lint
           # Optional: working directory, useful for monorepos
           # working-directory: somedir
 
@@ -32,4 +43,4 @@ jobs:
           # args: --issues-exit-code=0
 
           # Optional: show only new issues if it's a pull request. The default value is `false`.
-          # only-new-issues: true
+          only-new-issues: false
