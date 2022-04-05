@@ -121,45 +121,6 @@ func (a *TemplateAction) parseDir(path string) (*template.Template, error) {
 	return tmpl, nil
 }
 
-/*
-func (a *TemplateAction) parse() (*template.Template, error) {
-	// when source is present we use it
-	var (
-		tmplname string
-		tmplstr  string
-	)
-
-	if a.Source != "" {
-		info, err := os.Stat(a.Source)
-		if err != nil {
-			return nil, err
-		}
-		if info.IsDir() {
-			return a.parseDir(info.Name())
-		}
-
-		b, err := os.ReadFile(a.Source)
-		if err != nil {
-			return nil, err
-		}
-		tmplstr = string(b)
-		tmplname = a.Source
-	} else {
-		tmplstr = a.Content
-		tmplname = "content"
-	}
-
-	if tmplstr == "" {
-		return nil, errors.New("no template provided")
-	}
-	t, err := template.New(tmplname).Parse(tmplstr)
-	if err != nil {
-		return nil, err
-	}
-	return t, nil
-}
-*/
-
 // executeContent executes content as a template, with data, to the dest
 func executeContent(dest, content string, data interface{}) error {
 	dir := filepath.Dir(dest)
