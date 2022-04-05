@@ -21,6 +21,10 @@ jobs:
     steps:
       - uses: actions/setup-go@v2
       - uses: actions/checkout@v2
+      - name: Use distinct cache keys per matrix build
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-${{ runner.go-version }}-${{ hashFiles('**/go.*') }}
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
