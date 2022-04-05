@@ -43,9 +43,9 @@ func (s ActionSpec) Get(k string) (interface{}, bool) {
 }
 
 func (s ActionSpec) SetVars(a interface{}) error {
-    if a == nil || s.Vars() == nil {
-        return nil
-    }
+	if a == nil || s.Vars() == nil {
+		return nil
+	}
 	// get vars, resolve in global map, then decode them to top-level
 	sm, ok := s.Vars().(map[interface{}]interface{})
 	if !ok {
