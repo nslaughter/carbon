@@ -1,4 +1,4 @@
-package main
+package git
 
 import (
 	"errors"
@@ -6,9 +6,15 @@ import (
 	"os"
 
 	git "github.com/go-git/go-git/v5"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
-func NewGitAction() Action {
+func init() {
+	framework.Register("git", New)
+}
+
+func New() framework.Action {
 	return &GitAction{}
 }
 
@@ -19,7 +25,7 @@ type GitAction struct {
 	Command string
 }
 
-func (a *GitAction) Set(s ActionSpec) error {
+func (a *GitAction) Set(s framework.ActionSpec) error {
 	return s.ToAction(a)
 }
 

@@ -1,13 +1,19 @@
-package main
+package textreplace
 
 import (
 	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
-func NewTextReplaceAction() Action {
+func init() {
+	framework.Register("textreplace", New)
+}
+
+func New() framework.Action {
 	return &TextReplaceAction{
 		Excludes:      make([]string, 0),
 		Substitutions: make([]Substitution, 0),
@@ -24,7 +30,7 @@ type TextReplaceAction struct {
 	Substitutions []Substitution
 }
 
-func (a *TextReplaceAction) Set(s ActionSpec) error {
+func (a *TextReplaceAction) Set(s framework.ActionSpec) error {
 	return s.ToAction(a)
 }
 
