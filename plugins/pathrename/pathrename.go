@@ -1,17 +1,27 @@
-package main
+package pathrename
 
 import (
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
-func NewPathRenameAction() Action {
+func init() {
+	framework.Register("pathrename", New)
+}
+
+func New() framework.Action {
 	return &PathRenameAction{
 		Excludes:      make([]string, 0),
 		Substitutions: make([]Substitution, 0),
 	}
+}
+
+type Substitution struct {
+	Old, New string
 }
 
 type PathRenameAction struct {
@@ -20,7 +30,7 @@ type PathRenameAction struct {
 	Substitutions []Substitution
 }
 
-func (a *PathRenameAction) Set(s ActionSpec) error {
+func (a *PathRenameAction) Set(s framework.ActionSpec) error {
 	return s.ToAction(a)
 }
 

@@ -1,6 +1,6 @@
 run:
-  issues-exit-code: 2
-  timeout: 2m
+  issues-exit-code: 1
+  timeout: 5m
   skip-dirs:
     - vendor
 
@@ -41,7 +41,7 @@ linters-settings:
     max: 3
     ignore-calls: false # ignore when const not used as call arg
   godox:
-    # Report any comments starting with keywords, this is useful for TODO or FIXME comments that
+    # Report comments starting with keywords, this is useful for TODO or FIXME comments that
     # might be left in the code accidentally and should be resolved before merging.
     # Default: TODO, BUG, and FIXME.
     keywords:

@@ -8,6 +8,8 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"runtime/trace"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
 var (
@@ -106,7 +108,7 @@ func CLI(args []string) (exitcode int) {
 		return 0
 	}
 
-	run()
+	framework.Run(File)
 
 	return 0
 }
