@@ -52,6 +52,7 @@ steps:
         - go mod tidy
         - go mod vendor
 
+<<<<<<< HEAD
   - name: Apply text substitution to develop templates
     text_replace:
       vars:
@@ -65,3 +66,13 @@ steps:
         - {"old": "foundation/", "new": "infra/"}
         - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
         - {"old": "ardan-starter", "new": "myservice-starter"}
+=======
+  - name: Expand templates for demo
+    template:
+      source:
+      dest:
+      data:
+        first: one
+        second: two
+        third: 3
+>>>>>>> 1382cc1cfb1337e2246892fcb506b706c6f39e95
