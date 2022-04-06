@@ -52,6 +52,20 @@ steps:
         - go mod tidy
         - go mod vendor
 
+  - name: Apply text substitution to develop templates
+    text_replace:
+      vars:
+        dir: "/Users/njs/go/src/github.com/nslaughter/myservice/"
+        exclude: ["vendor", ".git"]
+      substitutions:
+        - {"old": "ardanlabs/service", "new": "nslaughter/myservice"}
+        - {"old": "app/", "new": "cmd/"}
+        - {"old": "zarf/", "new": "deploy/"}
+        - {"old": "business/", "new": "domain/"}
+        - {"old": "foundation/", "new": "infra/"}
+        - {"old": "github.com/emadolsky/automaxprocs", "new": "go.uber.org/automaxprocs"}
+        - {"old": "ardan-starter", "new": "myservice-starter"}
+
   - name: Expand templates for demo
     template:
       source:

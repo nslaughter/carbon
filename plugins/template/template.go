@@ -1,4 +1,4 @@
-package main
+package template
 
 import (
 	"errors"
@@ -8,10 +8,16 @@ import (
 	"path/filepath"
 	"regexp"
 	"text/template"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
 // Template scripts are the most complicated feature.
-func NewTemplateAction() Action {
+func init() {
+	framework.Register("template", New)
+}
+
+func New() framework.Action {
 	return &TemplateAction{
 		Force:    true,
 		Backup:   false,
@@ -37,7 +43,7 @@ type TemplateAction struct {
 	Includes []string
 }
 
-func (a *TemplateAction) Set(s ActionSpec) error {
+func (a *TemplateAction) Set(s framework.ActionSpec) error {
 	return s.ToAction(a)
 }
 

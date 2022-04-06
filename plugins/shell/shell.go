@@ -1,4 +1,4 @@
-package main
+package shell
 
 import (
 	"errors"
@@ -6,9 +6,15 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+
+	"github.com/nslaughter/carbon/framework"
 )
 
-func NewShellAction() Action {
+func init() {
+	framework.Register("shell", New)
+}
+
+func New() framework.Action {
 	return &ShellAction{
 		Commands: make([][]string, 0),
 	}
@@ -19,7 +25,7 @@ type ShellAction struct {
 	Commands [][]string
 }
 
-func (a *ShellAction) Set(s ActionSpec) error {
+func (a *ShellAction) Set(s framework.ActionSpec) error {
 
 	if err := s.SetVars(a); err != nil {
 		return err
