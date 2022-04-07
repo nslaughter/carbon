@@ -2,8 +2,8 @@ SHELL := /bin/bash
 
 # burnin some build info
 DATE := `date -u +"%Y-%m-%dT%H:%M:%SZ"`
-VERSION := $(shell git rev-parse --short HEAD)
-# git_description = $(shell git describe --always --dirty --tags --long)
+VERSION := $(shell git describe --always --dirty --tags --long)
+# $(shell git rev-parse --short HEAD) # doesn't include dirty
 
 BIN_DIR := bin
 MAIN_DIR := ./cmd/carbon
