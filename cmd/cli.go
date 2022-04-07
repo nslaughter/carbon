@@ -10,7 +10,12 @@ import (
 	"runtime/trace"
 
 	"github.com/nslaughter/carbon/framework"
+	// to register plugins
+	_ "github.com/nslaughter/carbon/plugins"
 )
+
+// build is the git version: it's set with build flags in the Makefile.
+var build = "develop"
 
 var (
 	// File is the path to the script.
