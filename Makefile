@@ -1,11 +1,15 @@
 SHELL := /bin/bash
 
+# burnin some build info
 DATE := `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 VERSION := $(shell git rev-parse --short HEAD)
 # git_description = $(shell git describe --always --dirty --tags --long)
 
+BIN_DIR := bin
+MAIN_DIR := ./cmd/carbon
+
 # ============================================================================
-# HELP
+# HELPERS
 # ============================================================================
 
 .PHONY: help
@@ -23,7 +27,18 @@ confirm:
 
 .PHONY: carbon
 carbon:
-	go build -ldflags "-X main.build=${VERSION}"
+	@mkdir -p $(BIN_DIR)
+	go build -ldflags "-X main.build=${VERSION}" -o $(BIN_DIR)/carbon $(MAIN_DIR)
+
+build:
+	@mkdir -p $(BIN_DIR)
+	go build -ldflags "-X main.build=${VERSION}" -o $(BIN_DIR)/carbon $(MAIN_DIR)
+
+clean:
+	rm -rf $(BIN_DIR)
+
+install:
+	go install -ldflags "-X main.build=${VERSION}" $(MAIN_DIR)
 
 # ============================================================================
 # DEVELOP
@@ -31,7 +46,7 @@ carbon:
 
 .PHONY: run
 run:
-	go run ./... --file=carbon.yaml
+	go run $(MAIN_DIR) --file=carbon.yaml
 
 # ============================================================================
 # CI 
@@ -56,7 +71,6 @@ ci: tidy
 	golangci-lint run
 	@echo Running tests...
 	go test -race -vet=off ./...
-
 
 # ============================================================================
 # TEST
