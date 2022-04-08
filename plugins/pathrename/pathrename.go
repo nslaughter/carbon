@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
+
 	"github.com/nslaughter/carbon/framework"
 )
 
@@ -25,9 +27,9 @@ type Substitution struct {
 }
 
 type PathRenameAction struct {
-	Dir           string
+	Dir           string `validate:"required"`
 	Excludes      []string
-	Substitutions []Substitution
+	Substitutions []Substitution `validate:"required"`
 }
 
 func (a *PathRenameAction) Set(s framework.ActionSpec) error {
@@ -35,7 +37,8 @@ func (a *PathRenameAction) Set(s framework.ActionSpec) error {
 }
 
 func (a *PathRenameAction) Validate() error {
-	return nil
+	val := validator.New()
+	return val.Struct(a)
 }
 
 func (a *PathRenameAction) processDir(path string) error {
